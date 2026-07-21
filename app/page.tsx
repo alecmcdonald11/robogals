@@ -27,11 +27,11 @@ function fmtIso(date:string){const [year,month,day]=date.split("-");return `${da
 export default function Home(){
   const now=new Date();
   const [view,setView]=useState({year:now.getFullYear(),month:now.getMonth()});
-  const [sessions,setSessions]=useState(seed);
+  const [sessions,setSessions]=useState<Session[]>([]);
   const [selected,setSelected]=useState<Session|null>(null);
   const [adminSession,setAdminSession]=useState<Session|null>(null);
   const [creating,setCreating]=useState(false);
-  const [registrations,setRegistrations]=useState(seedRegistrations);
+  const [registrations,setRegistrations]=useState<Registration[]>([]);
   const [screen,setScreen]=useState<"calendar"|"info"|"admin">("calendar");
   const [admin,setAdmin]=useState(false);
   const [monthMenu,setMonthMenu]=useState(false);
@@ -56,7 +56,6 @@ export default function Home(){
     <header className="top"><a className="brand" href="#" onClick={()=>setScreen("calendar")}><img src="/robogals-perth-logo.png" alt="Robogals Perth Asia Pacific"/><span><b>Volunteer Training</b><small>Perth chapter</small></span></a><nav aria-label="Primary navigation"><button className={screen==="calendar"?"active":""} onClick={()=>setScreen("calendar")}>Calendar</button><button className={screen==="info"?"active":""} onClick={()=>setScreen("info")}>Booking information</button><button className={screen==="admin"?"active":""} onClick={()=>setScreen("admin")}>{admin?"Admin dashboard":"Admin login"}</button></nav></header>
     {screen==="calendar"&&<>
       <section className="hero"><img className="hero-bot" src="/robogals-wordmark.png" alt=""/><div><span className="eyebrow">PERTH ROBOGALS</span><h1>Learn. Build. Inspire.</h1><p>Book your volunteer training and get ready to bring fun, hands-on engineering workshops to young people across Perth.</p></div><div className="timezone"><span>◷</span><div><small>Times shown in</small><b>Australia / Perth (AWST)</b></div></div></section>
-      <div className="test-banner"><b>Test environment</b><span>Sessions and registrations shown here are sample data for evaluation.</span></div>
       <section className="calendar-card">
         <div className="cal-head"><div><h2>{monthNames[view.month]} {view.year}</h2><p>Select a highlighted day to see sessions.</p></div><div className="cal-actions"><button aria-label="Previous month" onClick={()=>changeMonth(-1)}>←</button><button onClick={()=>setView({year:now.getFullYear(),month:now.getMonth()})}>Today</button><button aria-label="Next month" onClick={()=>changeMonth(1)}>→</button></div></div>
         <div className="calendar"><div className="week">{dow.map(d=><b key={d}>{d}</b>)}</div><div className="grid">{days.map((day,i)=>day===null?<div className="cell muted" key={`x${i}`}/>:<div className={`cell ${visibleSessions.some(s=>s.day===day)?"has":""}`} key={day}><span className="day">{day}</span><div className="events">{visibleSessions.filter(s=>s.day===day).map(s=><button key={s.id} className={`event ${effective(s).toLowerCase().replace(" ","-")}`} disabled={!bookable(s)} onClick={()=>setSelected(s)} aria-label={`${s.title}, ${s.start}, ${effective(s)}`}><span>{s.start}</span><b>{s.title}</b><small>{s.location.split(" · ")[0]}</small></button>)}</div></div>)}</div></div>

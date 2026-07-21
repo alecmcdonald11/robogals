@@ -1,13 +1,11 @@
 import { env } from "cloudflare:workers";
 import { getChatGPTUser } from "../../chatgpt-auth";
-import { ensureSeeded } from "../sessions/route";
 
 const ADMIN_EMAILS=new Set(["alecmcdonald11@gmail.com"]);
 async function authorised(){const user=await getChatGPTUser();return user&&ADMIN_EMAILS.has(user.email.toLowerCase())?user:null}
 
 export async function GET(){
   const user=await authorised();if(!user)return Response.json({error:"Unauthorised"},{status:401});
-  await ensureSeeded();
   const registrations=await env.DB.prepare("SELECT id,session_id AS sessionId,full_name AS name,student_number AS studentNumber,status FROM registrations ORDER BY created_at").all();
   return Response.json({user,registrations:registrations.results});
 }
