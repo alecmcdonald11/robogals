@@ -8,6 +8,13 @@
       "when": 1784607626093,
       "tag": "0000_flat_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1784691872295,
+      "tag": "0001_add_session_types_and_training_records",
+      "breakpoints": true
     }
   ]
 }

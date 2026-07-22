@@ -3,6 +3,7 @@ import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core
 export const trainingSessions = sqliteTable("training_sessions", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
+  sessionType: text("session_type").notNull().default("training"),
   description: text("description").notNull().default(""),
   sessionDate: text("session_date").notNull(),
   startTime: text("start_time").notNull(),
@@ -14,6 +15,18 @@ export const trainingSessions = sqliteTable("training_sessions", {
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
+
+export const trainedVolunteers = sqliteTable("trained_volunteers", {
+  id: text("id").primaryKey(),
+  sessionId: text("session_id").notNull(),
+  trainingTitle: text("training_title").notNull(),
+  fullName: text("full_name").notNull(),
+  studentNumber: text("student_number").notNull(),
+  email: text("email"),
+  markedAt: text("marked_at").notNull(),
+}, (table) => [
+  uniqueIndex("trained_session_student_unique").on(table.sessionId, table.studentNumber),
+]);
 
 export const registrations = sqliteTable("registrations", {
   id: text("id").primaryKey(),
