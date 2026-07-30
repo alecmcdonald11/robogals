@@ -1,7 +1,10 @@
 import { env } from "cloudflare:workers";
 import { getChatGPTUser } from "../../chatgpt-auth";
 
-const ADMIN_EMAILS=new Set(["alecmcdonald11@gmail.com"]);
+const ADMIN_EMAILS=new Set([
+  "alecmcdonald11@gmail.com",
+  "perth.training@robogals.org",
+]);
 async function authorised(){const user=await getChatGPTUser();return user&&ADMIN_EMAILS.has(user.email.toLowerCase())?user:null}
 
 export async function GET(){
