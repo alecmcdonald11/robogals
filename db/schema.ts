@@ -41,3 +41,46 @@ export const registrations = sqliteTable("registrations", {
 }, (table) => [
   uniqueIndex("registration_session_student_unique").on(table.sessionId, table.studentNumber),
 ]);
+
+export const trainingModules = sqliteTable("training_modules", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  videoKey: text("video_key").notNull(),
+  status: text("status").notNull().default("published"),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const moduleQuestions = sqliteTable("module_questions", {
+  id: text("id").primaryKey(),
+  moduleId: text("module_id").notNull().references(() => trainingModules.id, { onDelete: "cascade" }),
+  prompt: text("prompt").notNull(),
+  questionType: text("question_type").notNull(),
+  optionsJson: text("options_json").notNull(),
+  correctJson: text("correct_json").notNull(),
+  imageKey: text("image_key"),
+  position: integer("position").notNull(),
+  createdAt: text("created_at").notNull(),
+});
+
+export const moduleProgress = sqliteTable("module_progress", {
+  id: text("id").primaryKey(),
+  moduleId: text("module_id").notNull().references(() => trainingModules.id, { onDelete: "cascade" }),
+  questionId: text("question_id").notNull().references(() => moduleQuestions.id, { onDelete: "cascade" }),
+  studentNumber: text("student_number").notNull(),
+  fullName: text("full_name").notNull(),
+  answeredAt: text("answered_at").notNull(),
+}, (table) => [
+  uniqueIndex("module_progress_student_question_unique").on(table.moduleId, table.studentNumber, table.questionId),
+]);
+
+export const moduleCompletions = sqliteTable("module_completions", {
+  id: text("id").primaryKey(),
+  moduleId: text("module_id").notNull().references(() => trainingModules.id, { onDelete: "cascade" }),
+  studentNumber: text("student_number").notNull(),
+  fullName: text("full_name").notNull(),
+  completedAt: text("completed_at").notNull(),
+}, (table) => [
+  uniqueIndex("module_completion_student_unique").on(table.moduleId, table.studentNumber),
+]);
